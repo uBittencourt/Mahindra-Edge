@@ -1,9 +1,9 @@
 <h1 align='center'>
-    Sistema de Detecção de Obstáculos com Arduino
+    Sistema de Detecção de Obstáculos com IoT
 </h1>
 
 <h3>
-    Este é um projeto de sistema de detecção de obstáculos utilizando Arduino e sensores ultrassônicos, desenvolvido com um pensamento voltado a segurança dos pilotos da Fórmula E.
+    Este projeto visa desenvolver um sistema de detecção de obstáculos utilizando dispositivos IoT, proporcionando segurança em ambientes como corridas e trajetos urbanos.
 </h3>
 
 <p align="center">
@@ -11,38 +11,65 @@
   <a href="#objetivos">Objetivos</a> |
   <a href="#hardware-utilizado">Hardware Utilizado</a> |
   <a href="#funcionamento-do-código">Funcionamento do Código</a> |
-  <a href="#instalação-e-utilização">Instalação e Utilização</a> |
-  <a href="#aviso">Aviso</a> 
+  <a href="#arquitetura-da-solução">Arquitetura da Solução</a> |
+  <a href="#instruções-de-uso">Instruções de Uso</a> |
+  <a href="#avisos">Avisos</a>
 </p>
 
-![tinkercad-mahindra](./img/tinkercad_mahindra.png)
+![Hardware Simulação](./img/hardware_wokwi.png)
 
 ## Participantes
-1ESPI - Engenharia de Software
 * João Henrique Sena Hoffmann (RM550763)
 * Lucas Ludovico Cabral (RM554589)
+* Rafael Teofilo Lucena (RM555600)
 * Vinicius Fernandes Tavares Bittencourt (RM558909)
 * Weslley Oliveira Cardoso (RM557927)
 
 ## Objetivos
-O objetivo deste projeto é poder auxiliar o piloto no seu senso de espaço, para proteger tanto ele mesmo quanto quem dirige ao seu lado, o projeto foi pensado para pilotos de corrida, mas é possível ser utilizado por cidadãos comuns. O sistema utiliza sensores de distância ultrassônicos para detectar a presença de obstáculos em três direções: esquerda, frente e direita. De forma que, é possível ter uma segurança maior durante a corrida, ou seu trajeto com o carro.
+O objetivo deste projeto é aumentar a segurança dos motoristas, proporcionando uma detecção precisa de obstáculos em três direções (esquerda, frente e direita) através de sensores ultrassônicos. O sistema pode ser utilizado em contextos de corridas e em trajetos urbanos comuns.
 
 ## Hardware Utilizado
-* Arduino Uno
+* ESP32
 * Sensores de Distância (HC-SR04)
-* LEDs Vermelhos
-* Resistores
-* Display LCD I2C (16x2)
+* Jumpers
 
 ## Funcionamento do Código
-O sistema faz a definição dos pinos tanto de LED, como os dos sensores de distância. Com esses valores dos sensores (esquerda, frente, direita), ele fará uma verificação para saber se a distância é menor do que um valor prescrito anteriormente. Caso o valor seja menor, indica que o obstáculo está próximo, assim é apresentada uma notificação no display sobre este obstáculo, e também o LED correspondente é aceso. Mas caso, a condição não seja válida, os LED se apagarão e o display mostrará apenas o carro.
+O código está dividido entre a configuração do ESP32 e a aplicação web em Dash. O ESP32 conecta-se a uma rede Wi-Fi e ao broker MQTT, publicando as distâncias medidas e a presença de obstáculos.
+
+A aplicação Dash consome os dados dos obstáculos através de uma API, converte os timestamps para o horário de São Paulo, e exibe as informações em um gráfico em tempo real.
+
+### Código do ESP32
+O código do ESP32 configura os sensores de distância, medindo a distância até os obstáculos e publicando os dados nos tópicos MQTT apropriados. Mudando os valores enviados dependendo a partir da leitura dos sensores.
+
+### Código em Python
+A aplicação Dash recebe os dados do broker MQTT, processa as informações e as exibe em um gráfico de linhas com os três sensores em tempo real.
+
+## Arquitetura da Solução
+O diagrama de arquitetura representa os dispositivos IoT, a comunicação via MQTT e a aplicação web que processa e exibe os dados. A aplicação mobile é para a continuação do projeto, com envio de notificações via aplicativo.
+
+![Arquitetura IoT](./img/arquitetura_iot.jpg)
 
 ## Instruções de Uso
-* Conecte os componentes conforme o esquema de ligação.
-* Carregue o código para a placa Arduino.
-* Posicione os sensores de distância em locais adequados para detecção de obstáculos.
-* Ligue a alimentação da placa Arduino.
-* Observe o display LCD e os LEDs para determinar a presença de obstáculos em cada direção.
+1. **Configurar Hardware**:
+    * Conecte os três sensores de distância ao ESP32.
+    * Certifique-se de que o broker MQTT esteja configurado e acessível.
 
-## Aviso
+2. **Carregar Código no ESP32**:
+    * Carregue o código no dispositivo ESP32.
+
+3. **Configurar Máquina Virtual**
+    * Criar máquina virtual (em cloud service, de preferência).
+    * Instalar dependências necessárias:
+      * Docker;
+      * Fiware;
+      * Bibliotecas Python.
+  
+4. **Iniciar Aplicação Dash**:
+    * Execute o script Python que contém a aplicação Dash.
+    * Acesse a interface web no navegador.
+
+5. **Monitorar**:
+    * Observe o gráfico para identificar a presença de obstáculos.
+
+## Avisos
 Este projeto é uma prova de conceito e deve ser adaptado e aprimorado conforme as necessidades específicas da aplicação.
